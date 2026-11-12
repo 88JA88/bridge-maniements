@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="42" fill="#123b35"/><rect x="31" y="36" width="58" height="82" rx="8" fill="#f4b942"/><rect x="103" y="74" width="58" height="82" rx="8" fill="#fffefa"/><path d="M60 55l-10 15h8v27h5V70h8L60 55zm72 37l-10 15h8v27h5v-27h8l-11-15z" fill="#153630"/><text x="96" y="176" fill="#dcebe3" text-anchor="middle" font-family="Georgia,serif" font-size="16">BRIDGE</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">JA — Bridge - Manniements</title>
+  <rect width="512" height="512" rx="92" fill="#0b4fa3"/>
+  <g transform="translate(0 2) scale(.98)" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="square">
+    <path d="M143 97 A158 158 0 0 1 245 41"/><path d="M99 198 H245 V364 A166 166 0 0 1 99 198 Z"/>
+    <path d="M245 41 V364"/><path d="M264 41 V365"/><path d="M264 41 A158 158 0 0 1 380 300"/><path d="M264 198 H409"/>
+  </g>
+  <text x="256" y="440" fill="#fff" text-anchor="middle" font-family="Avenir Next,Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="1">BRIDGE -</text>
+  <text x="256" y="475" fill="#fff" text-anchor="middle" font-family="Avenir Next,Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="1">Maniements</text>
+</svg>
