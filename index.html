@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#123b35" />
+    <title>Atout — Analyse de couleur</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <p class="eyebrow">Bridge · une couleur à la fois</p>
+        <h1>Atout</h1>
+        <p class="lede">Trouvez le plan qui sert votre objectif : sécurité d’abord, ou rendement moyen.</p>
+      </header>
+
+      <section class="card setup" aria-labelledby="setup-title">
+        <div class="section-heading"><div><p class="eyebrow">1 · Les cartes visibles</p><h2 id="setup-title">Construisez la couleur</h2></div><button id="reset" class="text-button">Réinitialiser</button></div>
+        <p class="hint">Touchez une carte pour faire défiler son propriétaire : Déclarant → Mort → Adversaires.</p>
+        <div id="rank-grid" class="rank-grid" aria-label="Cartes de la couleur"></div>
+        <div class="hands" aria-live="polite">
+          <div class="hand declarer"><span>Déclarant</span><strong id="declarer-cards">—</strong></div>
+          <div class="hand dummy"><span>Mort</span><strong id="dummy-cards">—</strong></div>
+          <div class="hand unknown"><span>Adversaires inconnus</span><strong id="unknown-cards">—</strong></div>
+        </div>
+      </section>
+
+      <section class="card goal" aria-labelledby="goal-title">
+        <p class="eyebrow">2 · L’objectif</p><h2 id="goal-title">Que voulez-vous privilégier ?</h2>
+        <div class="goal-controls">
+          <label class="choice active"><input type="radio" name="goal" value="target" checked> Atteindre au moins</label>
+          <label> <select id="target" aria-label="Nombre de levées"><option value="1">1 levée</option><option value="2">2 levées</option><option value="3" selected>3 levées</option><option value="4">4 levées</option><option value="5">5 levées</option><option value="6">6 levées</option><option value="7">7 levées</option><option value="8">8 levées</option><option value="9">9 levées</option><option value="10">10 levées</option><option value="11">11 levées</option><option value="12">12 levées</option><option value="13">13 levées</option></select></label>
+          <label class="choice"><input type="radio" name="goal" value="average"> Maximiser le nombre moyen de levées</label>
+        </div>
+        <button id="analyze" class="primary">Analyser la couleur <span>→</span></button>
+      </section>
+
+      <section id="results" class="results hidden" aria-live="polite">
+        <div class="recommendation"><p class="eyebrow">Plan recommandé</p><h2 id="best-name">—</h2><p id="best-description"></p><div class="metrics"><div><span id="metric-label">Probabilité de réussir</span><strong id="best-prob">—</strong></div><div><span>Nombre moyen de levées</span><strong id="best-average">—</strong></div></div></div>
+        <div class="card alternatives"><div class="section-heading"><div><p class="eyebrow">Comparaison</p><h2>Autres lignes envisagées</h2></div></div><div id="plans" class="plan-list"></div></div>
+        <details class="reasoning"><summary>Voir le raisonnement <span>⌄</span></summary><div id="reasoning-content"></div></details>
+      </section>
+
+      <section class="card validation"><div class="section-heading"><div><p class="eyebrow">Contrôles du moteur</p><h2>Cas de validation</h2></div><button id="run-tests" class="secondary">Vérifier</button></div><p>Des exemples simples documentent les hypothèses et vérifient les calculs combinatoires.</p><div id="test-results" class="test-results"></div></section>
+      <footer>Version 1 · Une seule couleur · Pas de communications dans les autres couleurs.</footer>
+    </main>
+    <script src="engine.js"></script><script src="app.js"></script>
+  </body>
+</html>
