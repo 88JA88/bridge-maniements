@@ -2,7 +2,7 @@
   "name": "Bridge couleur",
   "short_name": "Bridge couleur",
   "description": "Analyse probabiliste du plan de jeu d'une couleur au bridge.",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f6f4ed",
   "theme_color": "#123b35",
