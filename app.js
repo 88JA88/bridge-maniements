@@ -12,7 +12,7 @@
   function objective(){return document.querySelector('input[name="goal"]:checked').value}
   function render(){
     const d=cards('declarer'),m=cards('dummy');
-    if(!d.length&&!m.length){alert('Attribuez au moins une carte au déclarant ou au mort.');return}
+    if(!d.length&&!m.length){alert('Attribue au moins une carte au déclarant ou au mort.');return}
     const r=E.analyze({declarer:d,dummy:m,target:+document.querySelector('#target').value,objective:objective()});
     const best=r.best; document.querySelector('#results').classList.remove('hidden');document.querySelector('#best-name').textContent=best.name;document.querySelector('#best-description').textContent=best.description;
     document.querySelector('#metric-label').textContent=objective()==='average'?'Probabilité pour l’objectif choisi':`Probabilité d’au moins ${r.target} levées`;
@@ -20,10 +20,8 @@
     document.querySelector('#plans').innerHTML=r.results.map((p,i)=>`<article class="plan"><div><h3>${i===0?'★ ':''}${p.name}</h3><p>${p.description}</p></div><div><strong>${E.percent(p.reach)}</strong><p>≥ ${r.target} levées · moy. ${p.average.toFixed(2)}</p></div></article>`).join('');
     const byLength={};r.deals.forEach(x=>{const k=Math.min(x.east.length,x.west.length),key=`${k}–${r.missing.length-k}`;byLength[key]=(byLength[key]||0)+x.weight});
     document.querySelector('#reasoning-content').innerHTML=`<p><strong>Cartes manquantes :</strong> ${r.missing.join(' ')||'aucune'}.</p><p>Le moteur énumère ${r.deals.length} positions précises Est/Ouest compatibles. Leur poids tient compte des 13 cartes de chaque défenseur et des cartes des autres couleurs non précisées.</p><table class="table"><thead><tr><th>Répartition</th><th>Probabilité</th></tr></thead><tbody>${Object.entries(byLength).map(([k,v])=>`<tr><td>${k}</td><td>${E.percent(v)}</td></tr>`).join('')}</tbody></table><p>Dans la ligne recommandée, les positions favorables représentent ${E.percent(best.favorable)} des cas. L’évaluation est volontairement limitée à cette couleur : aucune rentrée extérieure ni information d’enchères n’est supposée.</p><p><em>Note de version 1 :</em> les lignes candidates sont générées à partir des honneurs et longueurs visibles, puis évaluées pour chaque distribution. Les séquences complètes coup par coup seront extensibles dans le moteur sans modifier l’interface.</p>`;
-    document.querySelector('#results').scrollIntoView({behavior:'smooth',block:'start'});
   }
-  function tests(){document.querySelector('#test-results').innerHTML=`<table class="table"><thead><tr><th>Cas</th><th>Attendu</th><th>Calculé</th><th></th></tr></thead><tbody>${E.runValidation().map(t=>`<tr><td><strong>${t.name}</strong><br><small>D: ${t.d.join(' ')} · M: ${t.m.join(' ')}</small></td><td>${t.expected}</td><td>${t.plan}<br>${t.computed}</td><td class="${t.pass?'ok':'fail'}">${t.pass?'Cohérent':'À revoir'}</td></tr>`).join('')}</tbody></table>`}
-  document.querySelector('#analyze').onclick=render;document.querySelector('#reset').onclick=()=>{E.RANKS.forEach(r=>state[r]='unknown');draw();document.querySelector('#results').classList.add('hidden')};document.querySelector('#run-tests').onclick=tests;
+  document.querySelector('#analyze').onclick=render;document.querySelector('#reset').onclick=()=>{E.RANKS.forEach(r=>state[r]='unknown');draw();document.querySelector('#results').classList.add('hidden');document.querySelector('#best-name').textContent='En attente de l’analyse';document.querySelector('#best-description').textContent='Choisis l’objectif, puis analyse la couleur.';document.querySelector('#best-prob').textContent='—';document.querySelector('#best-average').textContent='—'};
   document.querySelectorAll('input[name="goal"]').forEach(x=>x.onchange=()=>document.querySelectorAll('.choice').forEach(l=>l.classList.toggle('active',l.querySelector('input')?.checked)));
-  draw();tests();
+  draw();
 })();

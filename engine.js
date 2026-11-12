@@ -39,13 +39,13 @@ window.BridgeColor = (() => {
     const h=highestMissingHonor(missing);
     const lines=[{
       id:'cash', name:'Tirer les gros honneurs',
-      description:'Encaissez les cartes maîtresses visibles avant de tenter autre chose.',
+      description:'Encaisse les cartes maîtresses visibles avant de tenter autre chose.',
       outcome: deal => ({tricks: Math.min(ours.length, base + (base === ours.length ? 0 : 0)), success:true})
     }];
     if(h && (declarer.includes('V') || dummy.includes('V') || declarer.includes('10') || dummy.includes('10') || declarer.includes('9') || dummy.includes('9'))) {
       lines.push({
         id:'finesse-east', name:`Faire l’impasse à ${h}`,
-        description:`Jouez vers l’honneur inférieur : réussite si ${h} est à droite de l’impasse.`,
+        description:`Joue vers l’honneur inférieur : réussite si ${h} est à droite de l’impasse.`,
         outcome: deal => { const good=deal.east.includes(h); return {tricks:Math.min(ours.length,base+(good?1:0)),success:good}; }
       });
       lines.push({
@@ -59,14 +59,14 @@ window.BridgeColor = (() => {
       const [a,b]=hs;
       lines.push({
         id:'double', name:'Double impasse',
-        description:`Tentez successivement ${a} puis ${b} : la ligne profite de chaque honneur bien placé.`,
+        description:`Tente successivement ${a} puis ${b} : la ligne profite de chaque honneur bien placé.`,
         outcome: deal => { const gained=(deal.east.includes(a)?1:0)+(deal.east.includes(b)?1:0); return {tricks:Math.min(ours.length,base+gained),success:gained>0}; }
       });
     }
     if (missing.length >= 4 && ours.length >= 5) {
       lines.push({
         id:'safety', name:'Jeu de sécurité',
-        description:'Préservez les honneurs et privilégiez les répartitions régulières plutôt que le meilleur rendement.',
+        description:'Préserve les honneurs et privilégie les répartitions régulières plutôt que le meilleur rendement.',
         outcome: deal => {
           const split=Math.abs(deal.east.length-deal.west.length);
           // Modèle de sécurité : régularité 3-2/4-2 favorisée, partage très long pénalisé.
