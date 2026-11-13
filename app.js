@@ -1,27 +1,37 @@
 (() => {
-  const E=window.BridgeColor, state={}; E.RANKS.forEach(r=>state[r]='unknown');
-  // Exemple initial explicitement décrit dans le brief.
-  ['A','10','8','3'].forEach(r=>state[r]='declarer'); ['R','V','7','2'].forEach(r=>state[r]='dummy');
-  const grid=document.querySelector('#rank-grid');
-  const names={declarer:'Déclarant',dummy:'Mort',unknown:'Adversaires'};
-  function cards(owner){return E.RANKS.filter(r=>state[r]===owner)}
+  const E=window.BridgeColor, selected=new Set();
+  const count=document.querySelector('#team-count'), grid=document.querySelector('#selected-cards');
+  for(let i=0;i<=13;i++){const o=document.createElement('option');o.value=i;o.textContent=`${i} carte${i===1?'':'s'}`;count.appendChild(o)}
+  count.value='8';
+  const invalidate=()=>document.querySelector('#results').classList.add('hidden');
   function draw(){
-    grid.innerHTML=''; E.RANKS.forEach(r=>{const b=document.createElement('button'); b.className=`rank ${state[r]}`;b.textContent=r;b.setAttribute('aria-label',`${r}, ${names[state[r]]}`);b.title=`${r} : ${names[state[r]]}`;b.onclick=()=>{state[r]=state[r]==='unknown'?'declarer':state[r]==='declarer'?'dummy':'unknown';draw()};grid.appendChild(b)});
-    document.querySelector('#declarer-cards').textContent=cards('declarer').join(' ')||'—'; document.querySelector('#dummy-cards').textContent=cards('dummy').join(' ')||'—';document.querySelector('#unknown-cards').textContent=cards('unknown').join(' ')||'—';
+    const n=13-Number(count.value);
+    document.querySelector('#summary-count').textContent=`${n} carte${n===1?'':'s'} chez les adversaires`;
+    grid.replaceChildren();
+    E.RANKS.forEach(c=>{const b=document.createElement('button');b.className='rank search-card'+(selected.has(c)?' selected':'');b.textContent=c;b.setAttribute('aria-pressed',String(selected.has(c)));b.setAttribute('aria-label',`Rechercher ${c}`);b.disabled=!selected.has(c)&&selected.size>=n;b.onclick=()=>{selected.has(c)?selected.delete(c):selected.add(c);invalidate();draw()};grid.appendChild(b)});
   }
-  function objective(){return document.querySelector('input[name="goal"]:checked').value}
+  const rows=items=>`<table class="table"><tbody>${items.map(([label,p])=>`<tr><td>${label}</td><td><strong>${E.percent(p)}</strong></td></tr>`).join('')}</tbody></table>`;
   function render(){
-    const d=cards('declarer'),m=cards('dummy');
-    if(!d.length&&!m.length){alert('Attribue au moins une carte au déclarant ou au mort.');return}
-    const r=E.analyze({declarer:d,dummy:m,target:+document.querySelector('#target').value,objective:objective()});
-    const best=r.best; document.querySelector('#results').classList.remove('hidden');document.querySelector('#best-name').textContent=best.name;document.querySelector('#best-description').textContent=best.description;
-    document.querySelector('#metric-label').textContent=objective()==='average'?'Probabilité pour l’objectif choisi':`Probabilité d’au moins ${r.target} levées`;
-    document.querySelector('#best-prob').textContent=E.percent(best.reach);document.querySelector('#best-average').textContent=best.average.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});
-    document.querySelector('#plans').innerHTML=r.results.map((p,i)=>`<article class="plan"><div><h3>${i===0?'★ ':''}${p.name}</h3><p>${p.description}</p></div><div><strong>${E.percent(p.reach)}</strong><p>≥ ${r.target} levées · moy. ${p.average.toFixed(2)}</p></div></article>`).join('');
-    const byLength={};r.deals.forEach(x=>{const k=Math.min(x.east.length,x.west.length),key=`${k}–${r.missing.length-k}`;byLength[key]=(byLength[key]||0)+x.weight});
-    document.querySelector('#reasoning-content').innerHTML=`<p><strong>Cartes manquantes :</strong> ${r.missing.join(' ')||'aucune'}.</p><p>Le moteur énumère ${r.deals.length} positions précises Est/Ouest compatibles. Leur poids tient compte des 13 cartes de chaque défenseur et des cartes des autres couleurs non précisées.</p><table class="table"><thead><tr><th>Répartition</th><th>Probabilité</th></tr></thead><tbody>${Object.entries(byLength).map(([k,v])=>`<tr><td>${k}</td><td>${E.percent(v)}</td></tr>`).join('')}</tbody></table><p>Dans la ligne recommandée, les positions favorables représentent ${E.percent(best.favorable)} des cas. L’évaluation est volontairement limitée à cette couleur : aucune rentrée extérieure ni information d’enchères n’est supposée.</p><p><em>Note de version 1 :</em> les lignes candidates sont générées à partir des honneurs et longueurs visibles, puis évaluées pour chaque distribution. Les séquences complètes coup par coup seront extensibles dans le moteur sans modifier l’interface.</p>`;
+    const n=13-Number(count.value), sought=E.RANKS.filter(c=>selected.has(c));
+    if(!sought.length){alert('Choisis au moins une carte à rechercher.');return}
+    const others=Array.from({length:n-sought.length},(_,i)=>`x${i}`), deals=E.enumerateDeals([...sought,...others]);
+    const summary=E.summarizePositions(deals,sought);
+    document.querySelector('#quick-results').innerHTML=`<div class="quick-card"><h3>${sought.join(' ')}</h3>${rows([['Au moins une de ces cartes sèche ou seconde',summary.atLeastOneAtMostTwo],['Une carte déterminée sèche ou seconde',summary.cards[0].atMostTwo],...(summary.together===null?[]:[['Toutes ensemble dans une main',summary.together],['Réparties entre les deux mains',summary.separated]])])}</div>`;
+    const positions=new Map(), lengths=new Map();
+    for(const deal of deals){
+      const k=Math.min(deal.east.length,deal.west.length), length=`${k}–${n-k}`;lengths.set(length,(lengths.get(length)||0)+deal.weight);
+      const first=deal.west.includes(sought[0])?deal.west:deal.east, second=first===deal.west?deal.east:deal.west;
+      const display=hand=>[...sought.filter(c=>hand.includes(c)),...Array(hand.filter(c=>c.startsWith('x')).length).fill('x')].join(' ')||'—';
+      const key=`${display(first)} / ${display(second)}`;positions.set(key,(positions.get(key)||0)+deal.weight);
+    }
+    document.querySelector('#position-results').innerHTML=rows([...positions].sort((a,b)=>b[1]-a[1]));
+    document.querySelector('#length-results').innerHTML=rows([...lengths].sort((a,b)=>b[1]-a[1]));
+    document.querySelector('#reasoning-content').innerHTML=`<p>Ton équipe détient ${13-n} cartes ; il en reste ${n} chez les adversaires, dont ${sought.join(' ')}. Les autres cartes sont représentées par x.</p><p>Le calcul examine ${deals.length} attributions précises des cartes aux deux adversaires. Chaque attribution est pondérée en tenant compte des 13 cartes de chaque défenseur, sans information issue des enchères. Les résultats symétriques sont additionnés.</p>`;
+    document.querySelector('#results').classList.remove('hidden');
   }
-  document.querySelector('#analyze').onclick=render;document.querySelector('#reset').onclick=()=>{E.RANKS.forEach(r=>state[r]='unknown');draw();document.querySelector('#results').classList.add('hidden');document.querySelector('#best-name').textContent='En attente de l’analyse';document.querySelector('#best-description').textContent='Choisis l’objectif, puis analyse la couleur.';document.querySelector('#best-prob').textContent='—';document.querySelector('#best-average').textContent='—'};document.querySelector('#refresh-app').onclick=async()=>{if('serviceWorker' in navigator){const registration=await navigator.serviceWorker.getRegistration();await registration?.update()}window.location.reload()};
-  document.querySelectorAll('input[name="goal"]').forEach(x=>x.onchange=()=>document.querySelectorAll('.choice').forEach(l=>l.classList.toggle('active',l.querySelector('input')?.checked)));
+  count.onchange=()=>{const max=13-Number(count.value);for(const c of [...selected].reverse())if(selected.size>max)selected.delete(c);invalidate();draw()};
+  document.querySelector('#analyze').onclick=render;
+  document.querySelector('#reset').onclick=()=>{count.value='8';selected.clear();invalidate();draw()};
+  document.querySelector('#refresh-app').onclick=async()=>{try{if('serviceWorker' in navigator)await (await navigator.serviceWorker.getRegistration())?.update()}finally{window.location.reload()}};
   draw();
 })();

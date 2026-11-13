@@ -18,34 +18,20 @@
         <img src="assets/logo-ja-applications.png" alt="JA-Applications" />
       </header>
       <section class="card setup" aria-labelledby="setup-title">
-        <div class="section-heading"><div><div class="bridge-bar"><p class="bridge-title">BRIDGE Maniements</p><button id="refresh-app" class="refresh-button">Actualiser l’application</button></div><h2 id="setup-title">1 · Construisez la couleur</h2></div><button id="reset" class="text-button">Réinitialiser</button></div>
-        <p class="hint">Touchez une carte pour faire défiler son propriétaire : Déclarant → Mort → Adversaires.</p>
-        <div id="rank-grid" class="rank-grid" aria-label="Cartes de la couleur"></div>
-        <div class="play-layout">
-          <div class="hands" aria-live="polite">
-            <div class="hand dummy"><span>Mort</span><strong id="dummy-cards">—</strong></div>
-            <div class="hand declarer"><span>Déclarant</span><strong id="declarer-cards">—</strong></div>
-            <div class="hand unknown"><span>Adversaires inconnus</span><strong id="unknown-cards">—</strong></div>
-          </div>
-          <aside class="plan-preview" aria-live="polite">
-            <p class="eyebrow">Plan recommandé</p><h2 id="best-name">En attente de l’analyse</h2><p id="best-description">Choisis l’objectif, puis analyse la couleur.</p>
-            <div class="metrics"><div><span id="metric-label">Probabilité</span><strong id="best-prob">—</strong></div><div><span>Levées moyennes</span><strong id="best-average">—</strong></div></div>
-          </aside>
-        </div>
+        <div class="section-heading"><div><div class="bridge-bar"><p class="bridge-title">BRIDGE Maniements</p><button id="refresh-app" class="refresh-button">Actualiser l’application</button></div><h2 id="setup-title">1 · Combien de cartes dans ton équipe ?</h2></div><button id="reset" class="text-button">Réinitialiser</button></div>
+        <div class="team-count"><label for="team-count">Déclarant + mort</label><select id="team-count" aria-label="Nombre de cartes dans ton équipe"></select><strong id="summary-count" aria-live="polite"></strong></div>
       </section>
 
       <section class="card goal" aria-labelledby="goal-title">
-        <h2 id="goal-title">2 · Objectif</h2>
-        <div class="goal-controls">
-          <label class="choice active"><input type="radio" name="goal" value="average" checked> Maximiser le nombre moyen de levées</label>
-          <label class="choice"><input type="radio" name="goal" value="target"> Atteindre au moins</label>
-          <label> <select id="target" aria-label="Nombre de levées"><option value="1">1 levée</option><option value="2">2 levées</option><option value="3" selected>3 levées</option><option value="4">4 levées</option><option value="5">5 levées</option><option value="6">6 levées</option><option value="7">7 levées</option><option value="8">8 levées</option><option value="9">9 levées</option><option value="10">10 levées</option><option value="11">11 levées</option><option value="12">12 levées</option><option value="13">13 levées</option></select></label>
-        </div>
-        <button id="analyze" class="primary">Analyser la couleur <span>→</span></button>
+        <h2 id="goal-title">2 · Quelles cartes cherches-tu ?</h2>
+        <p class="hint">Choisis les cartes manquantes qui t’intéressent.</p>
+        <div id="selected-cards" class="selection-grid"></div>
+        <button id="analyze" class="primary">Voir les répartitions <span>→</span></button>
       </section>
 
       <section id="results" class="results hidden" aria-live="polite">
-        <div class="card alternatives"><div class="section-heading"><div><p class="eyebrow">Comparaison</p><h2>Autres lignes envisagées</h2></div></div><div id="plans" class="plan-list"></div></div>
+        <div class="card highlights"><h2>Repères rapides</h2><div id="quick-results"></div></div>
+        <div class="card alternatives"><h2>Distributions possibles</h2><p class="hint">Chaque x représente une autre carte manquante. Les deux orientations Est/Ouest sont regroupées.</p><div id="position-results"></div><h2>Répartition par longueur</h2><div id="length-results"></div></div>
         <details class="reasoning"><summary>Voir le raisonnement <span>⌄</span></summary><div id="reasoning-content"></div></details>
       </section>
 
