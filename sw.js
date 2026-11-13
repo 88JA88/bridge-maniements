@@ -1,4 +1,4 @@
-const CACHE = 'bridge-couleur-v4';
+const CACHE = 'bridge-couleur-v5';
 const ASSETS = ['./', './index.html', './styles.css', './engine.js', './app.js', './manifest.webmanifest', './assets/logo-ja-applications.png', './icons/icon-192.svg', './icons/icon-512.svg'];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('bridge-couleur-') && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));

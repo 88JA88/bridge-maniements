@@ -32,6 +32,16 @@
   count.onchange=()=>{const max=13-Number(count.value);for(const c of [...selected].reverse())if(selected.size>max)selected.delete(c);invalidate();draw()};
   document.querySelector('#analyze').onclick=render;
   document.querySelector('#reset').onclick=()=>{count.value='8';selected.clear();invalidate();draw()};
+  document.querySelector('#quit-app').onclick=()=>{
+    window.close();
+    window.setTimeout(()=>{
+      if(document.visibilityState!=='visible')return;
+      const help=document.querySelector('#quit-help');
+      const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+      help.textContent=ios?'Pour quitter, balaie vers le haut depuis le bas de l’écran, ou appuie sur le bouton principal de ton appareil.':'Pour quitter, ferme cet onglet ou cette fenêtre. Sur Mac, tu peux aussi utiliser ⌘ W.';
+      help.hidden=false;
+    },300);
+  };
   document.querySelector('#refresh-app').onclick=async()=>{try{if('serviceWorker' in navigator)await (await navigator.serviceWorker.getRegistration())?.update()}finally{window.location.reload()}};
   draw();
 })();
